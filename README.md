@@ -10,22 +10,25 @@ This document outlines the standard coding workflow, commit message conventions,
 
 ### Before Starting to Code
 
-1. **Pull Latest Changes**: Ensure the local main branch is fully updated:
+1. **Pull Latest Changes** `[Every Session]`: Ensure the local main branch is fully updated:
    ```bash
    git checkout main
    git sync
    ```
-2. **Start the Database**: Ensure the PostgreSQL service is active (either via Docker or your system's native service).
-3. **Create a Feature Branch**: Create a dedicated branch for your task:
+2. **Start the Database** `[Every Session] [Linux / Windows / Docker]`: Ensure the PostgreSQL service is active:
+   - **Linux**: `sudo systemctl start postgresql`
+   - **Windows**: Start via Services (`services.msc`)
+   - **Docker**: `docker start postgres-db`
+3. **Create a Feature Branch** `[Every Task]`: Create a dedicated branch for your task:
    ```bash
    git hack feature/branch-name
    ```
-4. **Install Dependencies**: Verify that dependencies are up to date:
+4. **Install Dependencies** `[One-Time / If Changed]`: Verify that dependencies are up to date:
    ```bash
    composer install
    npm install
    ```
-5. **Start Development Servers**: Start the local Laravel server and Vite server:
+5. **Start Development Servers** `[Every Session]`: Start the local Laravel server and Vite server:
    ```bash
    php artisan serve
    npm run dev
