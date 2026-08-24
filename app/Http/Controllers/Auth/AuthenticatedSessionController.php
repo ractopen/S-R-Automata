@@ -34,6 +34,11 @@ class AuthenticatedSessionController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+        if ($user && $user->is_admin) {
+            Auth::login($user, $request->boolean('remember'));
+            return redirect()->intended(route('dashboard', absolute: false));
+        }
+
         $otp = (string) rand(100000, 999999);
 
         $user->login_otp = Hash::make($otp);

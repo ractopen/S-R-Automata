@@ -55,6 +55,17 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
+                        <!-- Reset Password -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <input type="hidden" name="redirect_to" value="{{ route('password.request') }}">
+                            <x-dropdown-link :href="route('password.request')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Reset Password') }}
+                            </x-dropdown-link>
+                        </form>
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -117,6 +128,17 @@
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                <!-- Reset Password -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <input type="hidden" name="redirect_to" value="{{ route('password.request') }}">
+                    <x-responsive-nav-link :href="route('password.request')"
+                            onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                        {{ __('Reset Password') }}
+                    </x-responsive-nav-link>
+                </form>
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

@@ -10,74 +10,26 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    private function authorizeManage(User $targetUser = null)
+    private function checkAdmin()
     {
-        $currentUser = auth()->user();
-        if (!$currentUser) {
-            abort(403);
-        }
-
-        // Super Admin can do everything
-        if ($currentUser->is_admin) {
-            return;
-        }
-
-        // If checking a specific user, ensure they were created by the current user
-        if ($targetUser && $targetUser->created_by !== $currentUser->id) {
-            abort(403, 'Unauthorized action. You can only manage users in your own system.');
-        }
-
-        // Sub-users (users created by managers) cannot manage or create users
-        if (!$targetUser && $currentUser->created_by !== null) {
-            abort(403, 'Unauthorized action. Only administrators/managers can perform this request.');
+        if (! auth()->user()?->is_admin) {
+            abort(403, 'Unauthorized action. Only administrators can perform this request.');
         }
     }
 
     public function index()
     {
-        $this->authorizeManage();
-
-        $users = auth()->user()->is_admin 
-            ? User::all() 
-            : User::where('created_by', auth()->id())->get();
+        $this->checkAdmin();
+        $users = User::all();
 
         return view('users.index', [
             'users' => $users
         ]);
     }
 
-    public function create()
-    {
-        $this->authorizeManage();
-        return view('users.create');
-    }
-
-    public function store(Request $request)
-    {
-        $this->authorizeManage();
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'pre_verified' => ['nullable', 'boolean'],
-        ]);
-
-        User::factory()->create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'created_by' => auth()->id(),
-            'is_admin' => false,
-            'email_verified_at' => $request->boolean('pre_verified') ? now() : null,
-        ]);
-
-        return redirect()->route('users.index')->with('status', 'User created successfully.');
-    }
-
     public function edit(User $user)
     {
-        $this->authorizeManage($user);
+        $this->checkAdmin();
         return view('users.edit', [
             'user' => $user
         ]);
@@ -85,7 +37,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $this->authorizeManage($user);
+        $this->checkAdmin();
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -101,7 +53,7 @@ class UserController extends Controller
 
     public function resetPassword(Request $request, User $user)
     {
-        $this->authorizeManage($user);
+        $this->checkAdmin();
 
         $request->validate([
             'password' => ['required', 'confirmed', Password::defaults()],
@@ -115,7 +67,7 @@ class UserController extends Controller
 
     public function toggleBlock(User $user)
     {
-        $this->authorizeManage($user);
+        $this->checkAdmin();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot block yourself.']);
@@ -134,9 +86,7 @@ class UserController extends Controller
 
     public function toggleAdmin(User $user)
     {
-        if (! auth()->user()?->is_admin) {
-            abort(403, 'Unauthorized action. Only administrators can perform this request.');
-        }
+        $this->checkAdmin();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot change your own admin role.']);
@@ -151,7 +101,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $this->authorizeManage($user);
+        $this->checkAdmin();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
