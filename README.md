@@ -10,26 +10,27 @@ This document outlines the standard coding workflow, commit message conventions,
 
 ### Before Starting to Code
 
-1. **Pull Latest Changes**: Ensure the local main branch is fully updated:
+1. **Pull Latest Changes** `[Every Session]`: Ensure the local development branch is fully updated:
    ```bash
-   git checkout main
+   git checkout development
    git sync
    ```
-2. **Start the Database**: Ensure the PostgreSQL service is active (either via Docker or your system's native service).
-3. **Create a Feature Branch**: Create a dedicated branch for your task:
+2. **Start the Database** `[Every Session] [Windows]`: Ensure the PostgreSQL service is running on Windows (start it using the Services app: search for `services.msc`, locate `postgresql`, and click **Start**).
+3. **Create a Feature Branch** `[Every Task]`: Create a dedicated branch for your task:
    ```bash
    git hack feature/branch-name
    ```
-4. **Install Dependencies**: Verify that dependencies are up to date:
+4. **Install Dependencies** `[One-Time / If Changed]`: Verify that dependencies are up to date:
    ```bash
    composer install
    npm install
    ```
-5. **Start Development Servers**: Start the local Laravel server and Vite server:
+5. **Start Development Servers** `[Every Session]`: Start the local Laravel server and Vite server:
    ```bash
    php artisan serve
    npm run dev
    ```
+6. **Open in Browser & Editor** `[Every Session]`: Open `http://127.0.0.1:8000` in your web browser to view the application, and open the project folder in your code editor (like VS Code) to start coding.
 
 ### Ending a Coding Session
 
@@ -47,9 +48,9 @@ This document outlines the standard coding workflow, commit message conventions,
    ```bash
    git propose
    ```
-5. **Clean Up**: Once the pull request is merged, return to main, pull changes, and delete the feature branch:
+5. **Clean Up**: Once the pull request is merged, return to development, pull changes, and delete the feature branch:
    ```bash
-   git checkout main
+   git checkout development
    git sync
    ```
    *Note: Git Town should automatically delete your feature branch during `git sync` if it was merged on GitHub. If the branch is still active locally or on remote, run the following Git Town command to delete it everywhere:*
@@ -88,7 +89,7 @@ Once installed, run this inside the project folder to configure it:
 ```bash
 git town init
 ```
-*(When prompted, select `main` as the main branch, and leave the parent branches default).*
+*(When prompted, select `development` as the main branch, and leave the parent branches default).*
 
 ---
 

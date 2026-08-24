@@ -9,11 +9,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $users = auth()->user()?->is_admin 
-        ? \App\Models\User::all() 
-        : \App\Models\User::where('created_by', auth()->id())->get();
     return view('dashboard', [
-        'users' => $users
+        'users'=> \App\Models\User::all()
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -24,8 +21,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::patch('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
@@ -37,6 +32,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/user', [UserController::class, 'index'])
 ->middleware(['auth'])
-->name('users.index-redirect');
+->name('users.index');
 
 require __DIR__.'/auth.php';

@@ -20,7 +20,6 @@ return new class extends Migration
 
                 $table->boolean('is_admin')->default(false);
                 $table->boolean('is_ban')->default(false);
-                $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
 
                 $table->rememberToken();
                 $table->timestamps();
