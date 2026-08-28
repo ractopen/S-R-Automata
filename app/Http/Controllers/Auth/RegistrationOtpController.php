@@ -58,6 +58,7 @@ class RegistrationOtpController extends Controller
         $user->save();
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         session()->forget('register.id');
 
@@ -76,7 +77,7 @@ class RegistrationOtpController extends Controller
             return redirect()->route('register');
         }
 
-        $otp = (string) rand(100000, 999999);
+        $otp = (string) random_int(100000, 999999);
 
         $user->otp = Hash::make($otp);
         $user->otp_expires_at = now()->addMinutes(15);

@@ -9,9 +9,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $users = auth()->user()?->is_admin 
-        ? \App\Models\User::all() 
-        : \App\Models\User::where('created_by', auth()->id())->get();
+    $user = auth()->user();
+    $users = $user?->is_admin ? \App\Models\User::all() : collect();
     return view('dashboard', [
         'users' => $users
     ]);
