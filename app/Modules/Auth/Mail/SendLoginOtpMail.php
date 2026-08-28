@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Modules\Auth\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -26,7 +26,7 @@ class SendLoginOtpMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.login-otp',
+            view: 'Auth::emails.login-otp',
         );
     }
 

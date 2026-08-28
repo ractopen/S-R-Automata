@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\UserManagement\Controllers;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -20,19 +22,13 @@ class UserController extends Controller
 
     public function index()
     {
-        $this->authorizeManage();
-
-        $users = User::all();
-
-        return view('users.index', [
-            'users' => $users
-        ]);
+        return redirect()->route('dashboard');
     }
 
     public function create()
     {
         $this->authorizeManage();
-        return view('users.create');
+        return view('UserManagement::create');
     }
 
     public function store(Request $request)
@@ -61,7 +57,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorizeManage();
-        return view('users.edit', [
+        return view('UserManagement::edit', [
             'user' => $user
         ]);
     }
@@ -104,11 +100,10 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'You cannot block yourself.']);
         }
 
-        $user->is_ban = !$user->is_ban;
-        $user->save();
-
         if ($user->is_ban) {
-            DB::table('sessions')->where('user_id', $user->id)->delete();
+            $user->unblock();
+        } else {
+            $user->block();
         }
 
         $status = $user->is_ban ? 'User blocked successfully.' : 'User unblocked successfully.';
@@ -123,8 +118,7 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'You cannot change your own admin role.']);
         }
 
-        $user->is_admin = !$user->is_admin;
-        $user->save();
+        $user->toggleAdmin();
 
         $status = $user->is_admin ? 'User promoted to Admin.' : 'User demoted from Admin.';
         return redirect()->route('dashboard')->with('status', $status);
@@ -138,20 +132,7 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
         }
 
-        DB::transaction(function () use ($user) {
-            DB::table('archived_users')->insert([
-                'name' => $user->name,
-                'email' => $user->email,
-                'password' => $user->password,
-                'is_admin' => $user->is_admin,
-                'is_ban' => $user->is_ban,
-                'original_created_at' => $user->created_at,
-                'original_updated_at' => $user->updated_at,
-                'archived_at' => now(),
-            ]);
-
-            $user->delete();
-        });
+        $user->archive();
 
         return redirect()->route('dashboard')->with('status', 'User archived and deleted.');
     }

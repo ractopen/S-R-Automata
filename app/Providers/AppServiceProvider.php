@@ -24,5 +24,10 @@ class AppServiceProvider extends ServiceProvider
                 ->mixedCase()
                 ->symbols();
         });
+
+        // Register custom view namespaces for the DDD modules
+        \Illuminate\Support\Facades\View::addNamespace('Auth', base_path('app/Modules/Auth/Views'));
+        \Illuminate\Support\Facades\View::addNamespace('UserManagement', base_path('app/Modules/UserManagement/Views'));
+        \Illuminate\Support\Facades\View::addNamespace('Dashboard', base_path('app/Modules/Dashboard/Views'));
     }
 }

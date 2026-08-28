@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
+
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ class LoginOtpController extends Controller
             return redirect()->route('login');
         }
 
-        return view('auth.login-otp');
+        return view('Auth::login-otp');
     }
 
     public function verify(Request $request)

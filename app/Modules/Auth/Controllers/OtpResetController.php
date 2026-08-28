@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
+
+use App\Modules\Auth\Mail\SendOtpMail;
+
 use App\Models\User;
-use App\Mail\SendOtpMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +16,7 @@ class OtpResetController extends Controller
 {
     public function create()
     {
-        return view('auth.forgot-password');
+        return view('Auth::forgot-password');
     }
 
     public function store(Request $request)
@@ -39,7 +41,7 @@ class OtpResetController extends Controller
 
     public function showVerifyForm(Request $request)
     {
-        return view('auth.verify-otp', [
+        return view('Auth::verify-otp', [
             'email' => $request->query('email')
         ]);
     }
