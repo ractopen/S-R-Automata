@@ -10,26 +10,11 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    private function authorizeManage(User $targetUser = null)
+    private function authorizeManage()
     {
         $currentUser = auth()->user();
-        if (!$currentUser) {
-            abort(403);
-        }
-
-        // Super Admin can do everything
-        if ($currentUser->is_admin) {
-            return;
-        }
-
-        // If checking a specific user, ensure they were created by the current user
-        if ($targetUser && $targetUser->created_by !== $currentUser->id) {
-            abort(403, 'Unauthorized action. You can only manage users in your own system.');
-        }
-
-        // Sub-users (users created by managers) cannot manage or create users
-        if (!$targetUser && $currentUser->created_by !== null) {
-            abort(403, 'Unauthorized action. Only administrators/managers can perform this request.');
+        if (!$currentUser || !$currentUser->is_admin) {
+            abort(403, 'Unauthorized action. Only administrators can perform this request.');
         }
     }
 
@@ -37,9 +22,7 @@ class UserController extends Controller
     {
         $this->authorizeManage();
 
-        $users = auth()->user()->is_admin 
-            ? User::all() 
-            : User::where('created_by', auth()->id())->get();
+        $users = User::all();
 
         return view('users.index', [
             'users' => $users
@@ -63,21 +46,21 @@ class UserController extends Controller
             'pre_verified' => ['nullable', 'boolean'],
         ]);
 
-        User::factory()->create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'created_by' => auth()->id(),
-            'is_admin' => false,
-            'email_verified_at' => $request->boolean('pre_verified') ? now() : null,
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->created_by = auth()->id();
+        $user->is_admin = false;
+        $user->email_verified_at = $request->boolean('pre_verified') ? now() : null;
+        $user->save();
 
-        return redirect()->route('users.index')->with('status', 'User created successfully.');
+        return redirect()->route('dashboard')->with('status', 'User created successfully.');
     }
 
     public function edit(User $user)
     {
-        $this->authorizeManage($user);
+        $this->authorizeManage();
         return view('users.edit', [
             'user' => $user
         ]);
@@ -85,7 +68,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $this->authorizeManage($user);
+        $this->authorizeManage();
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -96,26 +79,26 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->save();
 
-        return redirect()->route('users.index')->with('status', 'User details updated successfully.');
+        return redirect()->route('dashboard')->with('status', 'User details updated successfully.');
     }
 
     public function resetPassword(Request $request, User $user)
     {
-        $this->authorizeManage($user);
+        $this->authorizeManage();
 
         $request->validate([
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         $user->save();
 
-        return redirect()->route('users.index')->with('status', 'User password reset successfully.');
+        return redirect()->route('dashboard')->with('status', 'User password reset successfully.');
     }
 
     public function toggleBlock(User $user)
     {
-        $this->authorizeManage($user);
+        $this->authorizeManage();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot block yourself.']);
@@ -129,14 +112,12 @@ class UserController extends Controller
         }
 
         $status = $user->is_ban ? 'User blocked successfully.' : 'User unblocked successfully.';
-        return redirect()->route('users.index')->with('status', $status);
+        return redirect()->route('dashboard')->with('status', $status);
     }
 
     public function toggleAdmin(User $user)
     {
-        if (! auth()->user()?->is_admin) {
-            abort(403, 'Unauthorized action. Only administrators can perform this request.');
-        }
+        $this->authorizeManage();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot change your own admin role.']);
@@ -146,12 +127,12 @@ class UserController extends Controller
         $user->save();
 
         $status = $user->is_admin ? 'User promoted to Admin.' : 'User demoted from Admin.';
-        return redirect()->route('users.index')->with('status', $status);
+        return redirect()->route('dashboard')->with('status', $status);
     }
 
     public function destroy(User $user)
     {
-        $this->authorizeManage($user);
+        $this->authorizeManage();
 
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
@@ -172,6 +153,6 @@ class UserController extends Controller
             $user->delete();
         });
 
-        return redirect()->route('users.index')->with('status', 'User archived and deleted.');
+        return redirect()->route('dashboard')->with('status', 'User archived and deleted.');
     }
 }

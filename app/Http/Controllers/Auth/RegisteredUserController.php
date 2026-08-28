@@ -41,12 +41,12 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
         event(new Registered($user));
 
-        $otp = (string) rand(100000, 999999);
+        $otp = (string) random_int(100000, 999999);
         $user->otp = Hash::make($otp);
         $user->otp_expires_at = now()->addMinutes(15);
         $user->save();

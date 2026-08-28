@@ -17,13 +17,6 @@
                     </x-nav-link>
                 </div>
 
-                @if (Auth::user() && (Auth::user()->is_admin || Auth::user()->created_by === null))
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                            {{ __('User Management') }}
-                        </x-nav-link>
-                    </div>
-                @endif
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
                     <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -55,16 +48,6 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Reset Password -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <input type="hidden" name="redirect_to" value="{{ route('password.request') }}">
-                            <x-dropdown-link :href="route('password.request')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Reset Password') }}
-                            </x-dropdown-link>
-                        </form>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -100,13 +83,6 @@
             </x-responsive-nav-link>
         </div>
 
-        @if (Auth::user() && (Auth::user()->is_admin || Auth::user()->created_by === null))
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                    {{ __('User Management') }}
-                </x-responsive-nav-link>
-            </div>
-        @endif
 
         <div class="pt-2 pb-3 space-y-1">
             <form method="POST" action="{{ route('logout') }}" class="block w-full">
@@ -129,16 +105,6 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                <!-- Reset Password -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <input type="hidden" name="redirect_to" value="{{ route('password.request') }}">
-                    <x-responsive-nav-link :href="route('password.request')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Reset Password') }}
-                    </x-responsive-nav-link>
-                </form>
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

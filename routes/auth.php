@@ -24,6 +24,7 @@ Route::middleware('guest')->group(function () {
         ->name('register.otp.verify');
 
     Route::post('register/verify-otp', [RegistrationOtpController::class, 'verify'])
+        ->middleware('throttle:5,1')
         ->name('register.otp.submit');
 
     Route::post('register/resend-otp', [RegistrationOtpController::class, 'resend'])
@@ -38,6 +39,7 @@ Route::middleware('guest')->group(function () {
         ->name('login.otp.verify');
 
     Route::post('login/verify-otp', [LoginOtpController::class, 'verify'])
+        ->middleware('throttle:5,1')
         ->name('login.otp.submit');
 
     Route::get('forgot-password', [OtpResetController::class, 'create'])
@@ -50,6 +52,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.otp.verify');
 
     Route::post('verify-otp', [OtpResetController::class, 'reset'])
+        ->middleware('throttle:5,1')
         ->name('password.otp.reset');
 
     Route::post('verify-otp/resend', [OtpResetController::class, 'resend'])

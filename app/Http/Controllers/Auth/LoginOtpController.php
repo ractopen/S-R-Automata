@@ -48,6 +48,7 @@ class LoginOtpController extends Controller
         $user->save();
 
         Auth::login($user, session('auth.remember', false));
+        $request->session()->regenerate();
 
         session()->forget(['auth.id', 'auth.remember']);
 

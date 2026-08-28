@@ -25,7 +25,7 @@ class OtpResetController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        $otp = (string) rand(100000, 999999);
+        $otp = (string) random_int(100000, 999999);
 
         $user->otp = Hash::make($otp);
         $user->otp_expires_at = now()->addMinutes(15);
@@ -82,7 +82,7 @@ class OtpResetController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        $otp = (string) rand(100000, 999999);
+        $otp = (string) random_int(100000, 999999);
 
         $user->otp = Hash::make($otp);
         $user->otp_expires_at = now()->addMinutes(15);
