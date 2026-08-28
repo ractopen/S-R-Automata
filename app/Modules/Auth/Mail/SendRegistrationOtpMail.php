@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Modules\Auth\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendOtpMail extends Mailable
+class SendRegistrationOtpMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,14 +19,14 @@ class SendOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Password Reset OTP',
+            subject: 'Verify Your Registration Code',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.otp',
+            view: 'Auth::emails.registration-otp',
         );
     }
 

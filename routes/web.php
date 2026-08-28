@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Modules\UserManagement\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -11,7 +11,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = auth()->user();
     $users = $user?->is_admin ? \App\Models\User::all() : collect();
-    return view('dashboard', [
+    return view('Dashboard::dashboard', [
         'users' => $users
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');

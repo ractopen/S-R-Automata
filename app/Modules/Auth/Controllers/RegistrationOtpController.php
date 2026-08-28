@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
+
+use App\Modules\Auth\Mail\SendRegistrationOtpMail;
+
 use App\Models\User;
-use App\Mail\SendRegistrationOtpMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +25,7 @@ class RegistrationOtpController extends Controller
             return redirect()->route('register');
         }
 
-        return view('auth.register-otp', [
+        return view('Auth::register-otp', [
             'email' => $user->email,
         ]);
     }

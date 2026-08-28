@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\User;
-use App\Mail\SendRegistrationOtpMail;
-use App\Mail\SendLoginOtpMail;
-use App\Mail\SendOtpMail;
+use App\Modules\Auth\Mail\SendRegistrationOtpMail;
+use App\Modules\Auth\Mail\SendLoginOtpMail;
+use App\Modules\Auth\Mail\SendOtpMail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 

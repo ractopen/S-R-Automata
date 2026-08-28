@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
+
+use App\Modules\Auth\Mail\SendRegistrationOtpMail;
+
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -10,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendRegistrationOtpMail;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -22,7 +24,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('Auth::register');
     }
 
     /**
