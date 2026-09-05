@@ -41,17 +41,6 @@
     <h1>Seamless User<br>Management</h1>
     <p>A tool that helps you handle user management smoothly,
     giving you full control over your everyday accounts.</p>
-    <div>
-        @auth
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}">Login</a></br>
-            @if (Route::has('register'))
-                <a href="{{ route('register') }}">Register</a>
-            @endif
-        @endauth
-
-    </div>
 </body>
 
 </html>
