@@ -37,6 +37,11 @@ class LoginOtpController extends Controller
             return redirect()->route('login');
         }
 
+        if ($user->is_ban) {
+            session()->forget(['auth.id', 'auth.remember']);
+            return redirect()->route('login')->withErrors(['email' => __('Your account has been banned/blocked by an administrator.')]);
+        }
+
         if (!$user->login_otp_expires_at || now()->isAfter($user->login_otp_expires_at)) {
             return back()->withErrors(['otp' => 'This verification code has expired. Please log in again.']);
         }
