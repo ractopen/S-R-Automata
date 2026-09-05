@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Auth\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 
-use App\Modules\Auth\Mail\SendRegistrationOtpMail;
+use App\Mail\SendRegistrationOtpMail;
 
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -24,7 +24,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('Auth::register');
+        return view('auth.register');
     }
 
     /**

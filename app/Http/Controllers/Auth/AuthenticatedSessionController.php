@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\Auth\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 
-use App\Modules\Auth\Requests\LoginRequest;
-use App\Modules\Auth\Mail\SendLoginOtpMail;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Mail\SendLoginOtpMail;
 
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('Auth::login');
+        return view('auth.login');
     }
 
     /**
