@@ -70,7 +70,11 @@
 
         <!-- RIGHT SECTION -->
         <div>
-            <a href="{{ route('register') }}" class="btn-signup">Get Started</a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn-signup">Dashboard</a>
+            @else
+                <a href="{{ route('register') }}" class="btn-signup">Get Started</a>
+            @endauth
         </div>
 
     </nav>
