@@ -1,63 +1,189 @@
 # S-R Automata Project
 
-## Development Workflow
+## Development Workflow (Windows Guide)
 
-This document outlines the standard coding workflow, commit message conventions, and setup instructions for developers working on this project.
+This document provides a step-by-step development guide tailored for team members developing on **Windows** (using PowerShell, Windows Terminal, Command Prompt, or Git Bash).
+
+> [!IMPORTANT]
+> **Always use full `git town <command>` syntax!**
+> Do not use shortcuts like `git sync` or `git hack`. On Windows, Git Town aliases may not be configured in your environment, and running `git sync` will result in an error (`git: 'sync' is not a git command'`). Always type `git town sync`, `git town hack`, `git town propose`, and `git town delete`.
 
 ---
 
-## Coding Workflow
+## The Complete Team Development Cycle
 
-### Before Starting to Code
+Follow this lifecycle for **every single feature or bug fix**.
 
-1. **Pull Latest Changes** `[Every Session]`: Ensure the local development branch is fully updated:
-   ```bash
+```
+[development] git town sync
+      │
+      ▼
+[development] git town hack feature/xyz  ──► Creates & switches to task branch
+      │
+      ▼
+  Code & Test on Windows (php artisan serve & npm run dev)
+      │
+      ▼
+  git add .  &&  git commit -m "feat: ..."
+      │
+      ▼
+  git town propose  ──► Pushes branch & opens GitHub PR in browser
+      │
+      ▼
+  github.com  ──► Merge PR into development & click "Delete branch"
+      │
+      ▼
+  git checkout development  ──► Switch back to development
+      │
+      ▼
+  git town sync  ──► Pulls merged code & prunes remote tracking
+      │
+      ▼
+  git town delete feature/xyz  ──► Deletes local branch
+      │
+      ▼
+  Clean slate: Only 'development' and 'main' remain! Repeat for next task.
+```
+
+---
+
+### Step 1: Before Starting to Code (Prepare Your Environment)
+
+1. **Switch to `development`**:
+   Ensure you are on the primary branch before starting:
+   ```powershell
    git checkout development
-   git sync
    ```
-2. **Start the Database** `[Every Session] [Windows]`: Ensure the PostgreSQL service is running on Windows (start it using the Services app: search for `services.msc`, locate `postgresql`, and click **Start**).
-3. **Create a Feature Branch** `[Every Task]`: Create a dedicated branch for your task:
-   ```bash
-   git hack feature/branch-name
-   ```
-4. **Install Dependencies** `[One-Time / If Changed]`: Verify that dependencies are up to date:
-   ```bash
-   composer install
-   npm install
-   ```
-5. **Start Development Servers** `[Every Session]`: Start the local Laravel server and Vite server:
-   ```bash
-   php artisan serve
-   npm run dev
-   ```
-6. **Open in Browser & Editor** `[Every Session]`: Open `http://127.0.0.1:8000` in your web browser to view the application, and open the project folder in your code editor (like VS Code) to start coding.
 
-### Ending a Coding Session
+2. **Synchronize with the Remote Repository (`git town sync`)**:
+   Always fetch and pull the latest changes made by your teammates:
+   ```powershell
+   git town sync
+   ```
 
-1. **Verify Changes**: Test the implementation locally to ensure there are no errors.
-2. **Stage and Commit**: Stage modified files and write a commit message following the conventions:
-   ```bash
-   git add .
-   git commit -m "feat(scope): description of changes"
+3. **Ensure the PostgreSQL Database Service is Running on Windows**:
+   - Press <kbd>Win</kbd> + <kbd>R</kbd>, type `services.msc`, and press <kbd>Enter</kbd>.
+   - Scroll down to find `postgresql-x64-<version>` (e.g. `postgresql-x64-16`).
+   - If Status is not **Running**, right-click it and select **Start**.
+   - *(Alternative via Administrator PowerShell / Command Prompt)*:
+     ```powershell
+     net start postgresql-x64-16
+     ```
+
+4. **Create a Dedicated Task Branch (`git town hack`)**:
+   **Never code directly on `development` or `main`.** Create a new branch:
+   ```powershell
+   git town hack feature/your-feature-name
    ```
-3. **Sync with Remote**: Update the branch and push changes to the remote repository:
-   ```bash
-   git sync
+   *(For bug fixes, use `bugfix/issue-description`)*. Git Town will automatically branch off the freshly synced `development` branch.
+
+5. **Start Development Servers**:
+   Open two separate Windows Terminal tabs or PowerShell windows in the project root:
+   - **Tab 1 - Laravel Backend**:
+     ```powershell
+     php artisan serve
+     ```
+   - **Tab 2 - Vite Frontend Assets**:
+     ```powershell
+     npm run dev
+     ```
+   - Open your browser to `http://127.0.0.1:8000` to view the app, and open the project folder in VS Code (`code .`).
+
+---
+
+### Step 2: Coding & Local Verification
+
+6. **Write Your Code**:
+   - Make your changes and implement your feature.
+
+7. **Verify Changes Before Committing**:
+   - Make sure frontend assets compile without errors:
+     ```powershell
+     npm run build
+     ```
+   - Run the test suite:
+     ```powershell
+     php artisan test
+     ```
+
+---
+
+### Step 3: Staging, Committing & Proposing
+
+8. **Review Changed Files**:
+   ```powershell
+   git status
    ```
-4. **Create a Proposal**: Submit a pull request/proposal to merge changes:
-   ```bash
-   git propose
-   ```
-5. **Clean Up**: Once the pull request is merged, return to development, pull changes, and delete the feature branch:
-   ```bash
-   git checkout development
-   git sync
-   ```
-   *Note: Git Town should automatically delete your feature branch during `git sync` if it was merged on GitHub. If the branch is still active locally or on remote, run the following Git Town command to delete it everywhere:*
-   ```bash
-   git delete branch-name
-   ```
-6. **Stop Database Service**: Stop the database service if no longer needed.
+
+9. **Stage and Commit**:
+   - Stage all modified files:
+     ```powershell
+     git add .
+     ```
+   - Commit following the [Conventional Commits](#commit-message-conventions) standard:
+     ```powershell
+     git commit -m "feat(auth): describe your changes clearly"
+     ```
+
+10. **Propose Changes via Git Town (`git town propose`)**:
+    ```powershell
+    git town propose
+    ```
+    *What this command does:*
+    - Automatically syncs your branch with parent updates.
+    - Pushes your feature branch to GitHub (`origin`).
+    - Opens your default web browser directly to the GitHub Pull Request creation page!
+
+---
+
+### Step 4: GitHub.com (Merge & Remote Deletion)
+
+11. **Review and Create PR**:
+    - Verify that the base branch is `development` and the compare branch is your feature branch.
+    - Add a title and description, then click **Create pull request**.
+
+12. **Merge the PR**:
+    - Once reviewed and checks pass, click **Merge pull request** (or **Squash and merge**) and confirm.
+
+13. **Delete Remote Branch on GitHub**:
+    - Immediately after merging, click the **Delete branch** button on the GitHub PR page.
+    - This ensures remote branches are pruned and do not clutter the repository.
+
+---
+
+### Step 5: Local Cleanup & Preparing for the Next Step
+
+14. **Switch Back to `development`**:
+    ```powershell
+    git checkout development
+    ```
+
+15. **Sync Your Local `development` Branch**:
+    Pull the code you just merged on GitHub down to your local machine:
+    ```powershell
+    git town sync
+    ```
+
+16. **Delete the Local Branch**:
+    Delete your feature branch locally so it does not linger:
+    ```powershell
+    git town delete feature/your-feature-name
+    ```
+    *(If Git Town already removed it during sync or if using git directly: `git branch -d feature/your-feature-name`)*.
+
+17. **Confirm Only Two Branches Remain**:
+    Check your local branches:
+    ```powershell
+    git branch
+    ```
+    You should only see:
+    ```
+    * development
+      main
+    ```
+
+18. **Ready for the Next Step / Task**:
+    You are now clean and up-to-date. Repeat from **Step 1, Substep 2** (`git town sync` ➔ `git town hack <next-branch>`) for your next task!
 
 ---
 
@@ -83,13 +209,18 @@ This project follows the Conventional Commits standard:
 *   Git Town (Installed on your system)
 *   PostgreSQL (either run via Docker or installed natively)
 
-### 1. First-Time Git Town Setup
-If you do not have Git Town installed, install it via your system's package manager. 
-Once installed, run this inside the project folder to configure it:
-```bash
+### 1. First-Time Git Town Setup (Windows)
+If you do not have Git Town installed on Windows, install it using **winget** or **scoop** in PowerShell:
+```powershell
+winget install GitTown.GitTown
+# or
+scoop install git-town
+```
+Once installed, restart your terminal and run this inside the project folder to configure it:
+```powershell
 git town init
 ```
-*(When prompted, select `development` as the main branch, and leave the parent branches default).*
+*(When prompted, select `development` as the main branch, and leave the perennial / parent branches default).*
 
 ---
 
@@ -97,26 +228,28 @@ git town init
 
 Set up a PostgreSQL database using one of the following methods:
 
-#### Option A: Using Docker
-Start a PostgreSQL container with:
-```bash
-docker run --name postgres-db -e POSTGRES_PASSWORD=secretpassword -e POSTGRES_DB=sr_automata -p 5432:5432 -d postgres:latest
-```
-
-#### Option B: Native Installation (No Docker)
-1. Install PostgreSQL natively on your system (e.g., using the installer for Windows/macOS or your Linux package manager).
-2. Open your database tool (like pgAdmin or Beekeeper Studio) or run the SQL terminal (`psql`) and create a new database:
+#### Option A: Native Installation on Windows (Recommended for Windows)
+1. Download and run the Windows installer from [PostgreSQL Official Website](https://www.postgresql.org/download/windows/).
+2. During setup, remember your password (e.g. `secretpassword`).
+3. Open **pgAdmin** or SQL Shell (`psql`) and run:
    ```sql
    CREATE DATABASE sr_automata;
    ```
+4. Verify the PostgreSQL Windows Service is running in `services.msc`.
+
+#### Option B: Using Docker
+Start a PostgreSQL container with:
+```powershell
+docker run --name postgres-db -e POSTGRES_PASSWORD=secretpassword -e POSTGRES_DB=sr_automata -p 5432:5432 -d postgres:latest
+```
 
 ---
 
-### 3. Installation Steps
+### 3. Installation Steps (Windows Terminal / PowerShell)
 
 Follow these steps in order to set up your local development environment:
 
-```bash
+```powershell
 # 1. Clone the repository
 git clone https://github.com/Ractopen-Academic/S-R-Automata.git
 cd S-R-Automata
@@ -125,8 +258,10 @@ cd S-R-Automata
 composer install
 npm install
 
-# 3. Create the configuration env file
+# 3. Create the configuration env file (PowerShell / Git Bash)
 cp .env.example .env
+# Or in Windows Command Prompt (CMD):
+# copy .env.example .env
 ```
 
 ---
