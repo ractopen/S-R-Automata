@@ -70,33 +70,29 @@
                                                         <form method="POST" action="{{ route('users.toggle-admin', $user) }}" class="inline">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200">
-                                                                {{ __('Super Admin') }}
+                                                            <button type="submit" class="px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200" title="{{ __('Click to demote to User') }}">
+                                                                {{ __('Admin') }}
                                                             </button>
                                                         </form>
                                                     @else
                                                         <span class="px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                                                            {{ __('Super Admin') }}
+                                                            {{ __('Admin') }}
                                                         </span>
                                                     @endif
-                                                @elseif ($user->created_by === null)
+                                                @else
                                                     @if (Auth::user()?->is_admin)
                                                         <form method="POST" action="{{ route('users.toggle-admin', $user) }}" class="inline">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200">
-                                                                {{ __('Manager') }}
+                                                            <button type="submit" class="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-purple-100 hover:text-purple-800 dark:hover:bg-purple-900 dark:hover:text-purple-200" title="{{ __('Click to promote to Admin') }}">
+                                                                {{ __('User') }}
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <span class="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                                            {{ __('Manager') }}
+                                                        <span class="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                                            {{ __('User') }}
                                                         </span>
                                                     @endif
-                                                @else
-                                                    <span class="px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                                        {{ __('Sub-User') }}
-                                                    </span>
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4 text-center">

@@ -39,7 +39,6 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'pre_verified' => ['nullable', 'boolean'],
         ]);
 
         $user = new User();
@@ -48,7 +47,7 @@ class UserController extends Controller
         $user->password = $request->password;
         $user->created_by = auth()->id();
         $user->is_admin = false;
-        $user->email_verified_at = $request->boolean('pre_verified') ? now() : null;
+        $user->email_verified_at = now();
         $user->save();
 
         return redirect()->route('dashboard')->with('status', 'User created successfully.');
