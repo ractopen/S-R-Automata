@@ -23,7 +23,7 @@ Follow this cycle for **every feature or bug fix**:
 [development] git town hack feature/xyz  ──► Creates & switches to task branch
       │
       ▼
-  Code & Test with local servers (php artisan serve & npm run dev)
+  Code & Test with local server (php artisan serve)
       │
       ▼
   git add .  &&  git commit -m "feat: ..."
@@ -79,20 +79,12 @@ Follow this cycle for **every feature or bug fix**:
    ```
    *(For bug fixes, use `bugfix/issue-description`)*. Git Town automatically creates and checks out the branch based off latest `development`.
 
-5. **Start Local Development Servers**:
-   You can run all services in a single terminal:
+5. **Start Local Development Server**:
+   Start the local Laravel development server:
    ```powershell
-   composer run dev
+   php artisan serve
    ```
-   *Or open two separate terminal tabs/windows:*
-   - **Tab 1 (Laravel Backend)**:
-     ```powershell
-     php artisan serve
-     ```
-   - **Tab 2 (Vite Frontend Hot-Reload)**:
-     ```powershell
-     npm run dev
-     ```
+   *(No `npx` or build tool required — we write standard, normal CSS!)*
    - Open `http://127.0.0.1:8000` in your web browser.
 
 ---
@@ -100,8 +92,8 @@ Follow this cycle for **every feature or bug fix**:
 ### Step 2: Coding & Local Testing
 
 6. **Write Your Code**:
-   - Make your changes in your code editor (e.g. VS Code: `code .`).
-   - Vite (`npm run dev`) automatically updates your styles and scripts in real-time.
+   - Write your code and normal CSS directly in your views or stylesheets.
+   - Simply refresh `http://127.0.0.1:8000` in your browser to view changes immediately.
 
 7. **Verify Tests**:
    - Run the automated test suite to ensure no regressions:
@@ -300,9 +292,9 @@ php artisan db:seed
 
 ### 6. Start Developing
 
+Start the Laravel server:
 ```powershell
-composer run dev
+php artisan serve
 ```
-*(Or run `php artisan serve` and `npm run dev` in separate terminals).*
 
 Open `http://127.0.0.1:8000` in your browser. You are ready to start coding!
