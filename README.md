@@ -10,175 +10,88 @@ This guide provides the standard team development workflow for developers on **W
 > **Always use full `git town <command>` syntax!**
 > Do not use shortcuts like `git sync` or `git hack`. On Windows, Git Town aliases may not be configured in your shell, causing errors like `git: 'sync' is not a git command`. Always type out the full command: `git town sync`, `git town hack`, `git town propose`, and `git town delete`.
 
----
+### Step-by-Step Development Workflow
 
-### The Complete Team Lifecycle
+Follow this single numbered sequence in order for **every single feature or bug fix**:
 
-Follow this cycle for **every feature or bug fix**:
-
-```
-[development] git town sync
-      │
-      ▼
-[development] git town hack feature/xyz  ──► Creates & switches to task branch
-      │
-      ▼
-  Code & Test with local server (php artisan serve)
-      │
-      ▼
-  git add .  &&  git commit -m "feat: ..."
-      │
-      ▼
-  git town propose  ──► Pushes branch & opens GitHub PR in your browser
-      │
-      ▼
-  github.com  ──► Review, merge PR into development & click "Delete branch"
-      │
-      ▼
-  git checkout development  ──► Switch back to development
-      │
-      ▼
-  git town sync  ──► Pulls merged code & cleans up remote tracking
-      │
-      ▼
-  git town delete feature/xyz  ──► Deletes local branch
-      │
-      ▼
-  Clean slate: Only 'development' and 'main' remain! Repeat for next task.
+#### 1. Ensure you are on `development`
+Make sure your terminal is on the primary development branch:
+```powershell
+git checkout development
 ```
 
----
+#### 2. Pull latest team changes (`git town sync`)
+Always pull the latest changes from GitHub before creating a branch:
+```powershell
+git town sync
+```
 
-### Step 1: Before Starting to Code (Prepare Your Branch & Environment)
+#### 3. Ensure PostgreSQL service is running on Windows
+- Press <kbd>Win</kbd> + <kbd>R</kbd>, type `services.msc`, and press <kbd>Enter</kbd>.
+- Find `postgresql-x64-<version>` (e.g. `postgresql-x64-16`).
+- If Status is not **Running**, right-click it and click **Start** (or run `net start postgresql-x64-16` in an Administrator PowerShell).
 
-1. **Switch to `development`**:
-   Make sure you are on the primary development branch:
-   ```powershell
-   git checkout development
-   ```
+#### 4. Create your task branch (`git town hack`)
+**Never code directly on `development` or `main`.** Create a dedicated branch:
+```powershell
+git town hack feature/your-feature-name
+```
+*(For bug fixes, use `bugfix/issue-description`). Git Town automatically creates and switches to your new branch based off `development`.*
 
-2. **Synchronize with the Team (`git town sync`)**:
-   Always fetch and pull the latest changes from GitHub before creating a branch:
-   ```powershell
-   git town sync
-   ```
+#### 5. Start the Laravel development server
+```powershell
+php artisan serve
+```
+Open `http://127.0.0.1:8000` in your web browser. *(No `npx` or build commands needed — we write standard, normal CSS!)*
 
-3. **Ensure PostgreSQL Database Service is Running on Windows**:
-   - Press <kbd>Win</kbd> + <kbd>R</kbd>, type `services.msc`, and press <kbd>Enter</kbd>.
-   - Find `postgresql-x64-<version>` (e.g. `postgresql-x64-16`).
-   - If Status is not **Running**, right-click it and click **Start**.
-   - *(Alternative via Administrator PowerShell)*:
-     ```powershell
-     net start postgresql-x64-16
-     ```
+#### 6. Write your code and normal CSS
+- Edit files in your editor (e.g. VS Code: `code .`).
+- Write normal CSS directly in `<style>` blocks or stylesheets.
+- Refresh `http://127.0.0.1:8000` in your browser to view your changes immediately.
 
-4. **Create a Dedicated Task Branch (`git town hack`)**:
-   **Never code directly on `development` or `main`.** Create your branch:
-   ```powershell
-   git town hack feature/your-feature-name
-   ```
-   *(For bug fixes, use `bugfix/issue-description`)*. Git Town automatically creates and checks out the branch based off latest `development`.
+#### 7. Stage and commit your changes
+Check what changed, stage all modified files, and commit following [Conventional Commits](#commit-message-conventions):
+```powershell
+git status
+git add .
+git commit -m "feat(scope): describe your changes clearly"
+```
 
-5. **Start Local Development Server**:
-   Start the local Laravel development server:
-   ```powershell
-   php artisan serve
-   ```
-   *(No `npx` or build tool required — we write standard, normal CSS!)*
-   - Open `http://127.0.0.1:8000` in your web browser.
+#### 8. Propose your changes to GitHub (`git town propose`)
+```powershell
+git town propose
+```
+*What this does:* Git Town automatically synchronizes your branch, pushes it to GitHub (`origin`), and opens your web browser directly to create the Pull Request!
 
----
+#### 9. On GitHub.com: Review, Merge & Delete the Remote Branch
+- Verify the base branch is `development` and click **Create pull request**.
+- Once reviewed, click **Merge pull request** (or **Squash and merge**) and confirm.
+- **Immediately click the "Delete branch" button** on GitHub so the remote repo stays clean.
 
-### Step 2: Coding & Local Testing
+#### 10. Clean up locally & prepare for the next task
+Back in your Windows terminal:
+```powershell
+# 1. Switch back to development
+git checkout development
 
-6. **Write Your Code**:
-   - Write your code and normal CSS directly in your views or stylesheets.
-   - Simply refresh `http://127.0.0.1:8000` in your browser to view changes immediately.
+# 2. Pull the freshly merged code from GitHub
+git town sync
 
-7. **Verify Tests**:
-   - Run the automated test suite to ensure no regressions:
-     ```powershell
-     php artisan test
-     ```
+# 3. Delete the local task branch
+git town delete feature/your-feature-name
+```
 
----
-
-### Step 3: Staging, Committing & Proposing
-
-8. **Check Modified Files**:
-   ```powershell
-   git status
-   ```
-
-9. **Stage and Commit**:
-   - Stage all changes:
-     ```powershell
-     git add .
-     ```
-   - Commit following [Conventional Commits](#commit-message-conventions):
-     ```powershell
-     git commit -m "feat(auth): describe your changes clearly"
-     ```
-
-10. **Propose Changes (`git town propose`)**:
-    ```powershell
-    git town propose
-    ```
-    *What this command does:*
-    - Synchronizes your branch with any recent changes.
-    - Pushes your feature branch to GitHub (`origin`).
-    - Opens your default web browser directly to the GitHub Pull Request page.
-
----
-
-### Step 4: GitHub.com (Review, Merge & Remote Cleanup)
-
-11. **Create the Pull Request**:
-    - Ensure base branch is set to `development` and compare branch is your feature branch.
-    - Review the diff, add a title and description, and click **Create pull request**.
-
-12. **Merge the PR**:
-    - Once reviewed and CI tests pass, click **Merge pull request** (or **Squash and merge**) and confirm.
-
-13. **Delete the Remote Branch on GitHub**:
-    - Immediately after merging, click the **Delete branch** button on GitHub.
-    - This keeps the remote repository clean with only `development` and `main`.
-
----
-
-### Step 5: Local Cleanup & Next Task
-
-14. **Switch Back to `development`**:
-    ```powershell
-    git checkout development
-    ```
-
-15. **Sync Your Local `development` Branch (`git town sync`)**:
-    Pull the code you just merged on GitHub down to your local machine:
-    ```powershell
-    git town sync
-    ```
-
-16. **Delete the Local Task Branch**:
-    Delete your local feature branch:
-    ```powershell
-    git town delete feature/your-feature-name
-    ```
-    *(If Git Town already removed it during sync or if using git directly: `git branch -d feature/your-feature-name`)*.
-
-17. **Confirm Clean State**:
-    Check your local branches:
-    ```powershell
-    git branch
-    ```
-    You should only see:
-    ```
-    * development
-      main
-    ```
-
-18. **Ready for Next Task**:
-    You are now clean and up-to-date. Repeat from **Step 1, Substep 2** (`git town sync` ➔ `git town hack <next-branch>`) for your next task!
+#### 11. Verify clean slate
+Check your local branches:
+```powershell
+git branch
+```
+You should only see:
+```
+* development
+  main
+```
+You are completely clean and ready! Repeat from **Step 2** (`git town sync` ➔ `git town hack <next-branch>`) for your next task.
 
 ---
 
