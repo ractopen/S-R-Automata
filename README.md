@@ -26,10 +26,12 @@ Always pull the latest changes from GitHub before creating a branch:
 git town sync
 ```
 
-#### 3. Ensure PostgreSQL service is running on Windows
-- Press <kbd>Win</kbd> + <kbd>R</kbd>, type `services.msc`, and press <kbd>Enter</kbd>.
-- Find `postgresql-x64-<version>` (e.g. `postgresql-x64-16`).
-- If Status is not **Running**, right-click it and click **Start** (or run `net start postgresql-x64-16` in an Administrator PowerShell).
+#### 3. Ensure PostgreSQL is running
+*(Note: If installed natively on Windows, PostgreSQL runs automatically in the background on system startup, so you usually don't need to do anything!)*
+If you ever need to start it manually:
+- **Windows Service (Default)**: Press <kbd>Win</kbd> + <kbd>R</kbd>, type `services.msc`, find `postgresql-x64-<version>`, and click **Start** (or run `net start postgresql-x64-16` in an Administrator PowerShell).
+- **Laragon (XAMPP Alternative with GUI)**: If you use Laragon, simply click **Start All** with PostgreSQL enabled.
+- **Docker Desktop GUI**: If running in Docker, simply click the **Play/Start** button on your container.
 
 #### 4. Create your task branch (`git town hack`)
 **Never code directly on `development` or `main`.** Create a dedicated branch:
@@ -188,18 +190,16 @@ DB_PASSWORD=secretpassword
 
 ---
 
-### 5. Generate Key, Run Migrations & Seed Database
+### 5. Generate Key, Run Migrations & Seed Admin User
 
 ```powershell
 # 1. Generate Application Key
 php artisan key:generate
 
-# 2. Run database migrations to create tables
-php artisan migrate
-
-# 3. Seed initial Administrator account (optional)
-php artisan db:seed
+# 2. Run database migrations AND seed the Admin user in one single command:
+php artisan migrate --seed
 ```
+*(When prompted by the seeder in your terminal, type your Admin Name, Email, and Password, or press Enter to accept default test values).*
 
 ---
 
